@@ -21,8 +21,8 @@
 // - added exponential weighted moving average calculation for the period, and increased precision
 
 /*
- * This code reads an analog signal, finds the rising edge, measure the period between each rising edge,
- * compute the frequency, compares that frequency to the table of in-tune frequencies and finally displays
+ * This code reads an analog signal, finds the rising edge, measures the period between each rising edge,
+ * computes the frequency, compares that frequency to the table of in-tune frequencies and finally displays
  * the corresponding note and if it's in tune or not.
  * 
  * Compatible hardware:

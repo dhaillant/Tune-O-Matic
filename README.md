@@ -1,18 +1,22 @@
 # Tune-O-Matic
-Tuner for analog synths, inspired by Amanda Ghassaei's Instructables and Sam's LookMumNoComputer Videos
+Tuner for analog synths
 
-This code is an adapted version of the code published by Amanda and Sam. 
-I came across the tuner while looking at Sam's video on the 1112 performance 
-oscillators and responded to his challenge for anyone to look at the code and maybe send him a
-new version. I streamlined the code a bit and added some comments. 
+Forked from Jos Bouten's code (https://github.com/josbouten/Tune-O-Matic)
 
-Have a look at LOOKMUMNOCOMPUTER's video's on building the 
-1112 performance oscillators here https://www.lookmumnocomputer.com/projects#/1222-performance-vco 
+Portions of code from:
+ - Amanda Ghassaei's Instructables https://www.instructables.com/Arduino-Frequency-Detection/
+ - Sam's LookMumNoComputer https://www.lookmumnocomputer.com/projects#/1222-performance-vco
 
-Note, the code contains one define LED_TEST which you can use to test your hardware.
-When uncommented and uploaded it allows you to check all the leds and the patterns used to 
-show the tuning in the display. Once you are sure the leds perform as they should, comment the line,
-recompile and upload the code and you should be set.
+The Tune-O-Matic firmware samples an analog signal, tries to detect the rising edges, measures the time between each cycle, averages the values, converts the result to a frequency, compares that frequency to a table of frequencies/notes pairs and finally displays the corresponding note, and if it's above, below or in-tune.
+
 
 The code is usable for a common anode or common cathode led display. 
 Follow the instructions in the code and set LED_DISPLAY_TYPE to the one you use.
+
+There are some alternate charsets: you can choose between "b" or "B", "g" or "G". Uncomment the corresponding definition in code.
+
+The code is compatible with the following hardwares:
+ - https://www.lookmumnocomputer.com/projects#/1222-performance-vco
+ - https://github.com/MyModularJourney/Tuna
+ - https://www.davidhaillant.com/category/electronic-projects/utility-modules/tuner/
+
