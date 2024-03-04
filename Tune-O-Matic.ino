@@ -54,6 +54,13 @@
 //
 #define LED_DISPLAY_TYPE COMMON_ANODE
 
+// choose your charset. Uncomment the following lines to select either large or small characters:
+#define LARGE_G
+//#define LARGE_B
+
+// LARGE_G is shaped like "G", else it's shaped like "g"
+// LARGE_B is shaped like "B", else it's shaped like "b"
+
 
 // DO NOT CHANGE ANYTHING BELOW THIS LINE
 //-------------------------------------------------------------------------------------------
@@ -385,11 +392,11 @@ const uint8_t led_digits[] = {
   0b10000111,     // F  CHAR_F
   0b10010111,     // F# CHAR_FS
   #ifdef LARGE_G
-    0b01101111,   // G  CHAR_G  ("G" shaped)
-    0b01111111,   // G# CHAR_GS ("G" shaped)
+    0b11100110,   // G  CHAR_G  ("G" shaped)
+    0b11110110,   // G# CHAR_GS ("G" shaped)
   #else
-    0b11100110,   // G  CHAR_G  ("g" shaped)
-    0b11110110,   // G# CHAR_GS ("g" shaped)
+    0b01101111,   // G  CHAR_G  ("g" shaped)
+    0b01111111,   // G# CHAR_GS ("g" shaped)
   #endif
   0b10101111,     // A  CHAR_A
   0b10111111,     // A# CHAR_AS
