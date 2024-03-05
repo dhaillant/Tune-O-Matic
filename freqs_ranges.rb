@@ -6,6 +6,8 @@
     Copy/paste the output in array named "frequencyTable"
 
     David Haillant, 20240212
+
+    20240305: added all frequencies for the 7th octave
 =end
 
 =begin
@@ -59,7 +61,7 @@ Frequency = Struct.new(:min_boundary, :min_acceptable, :central, :max_acceptable
 frequencies = []
 
 # we calculate the frequencies for 6 octaves + 1 note, from C0 to C6
-for note in -57..15 do
+for note in -57..26 do
   central_freq = (A4_reference * 2 ** (note / 12.0)).round(1)
 
   min_boundary   = (central_freq * 2 ** (-50.0 / 1200)).round(1).to_i
@@ -125,7 +127,12 @@ for i in 0..11 do
         print ",\t"
       end
     else
-     print "#{frequencies[i + 12 * j].max_acceptable},\t#{frequencies[i + 12 * j].max_boundary},\t"
+      print "#{frequencies[i + 12 * j].max_acceptable},\t#{frequencies[i + 12 * j].max_boundary}"
+      if (i == 11) then
+        print "\t"
+      else
+        print ",\t"
+      end
     end
   end
   print "\n"
