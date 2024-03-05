@@ -20,3 +20,20 @@ The code is compatible with the following hardwares:
  - https://github.com/MyModularJourney/Tuna
  - https://www.davidhaillant.com/category/electronic-projects/utility-modules/tuner/
 
+
+## generating frequency data
+The firmwares already contains values for A4=440Hz and 6 cents deviation allowed.
+
+Use the ruby script **freqs_ranges.rb**:
+
+  ruby freqs_ranges.rb
+
+Copy and paste the results in the Arduino code, in the array *frequencyTable*
+By default, the script generates frequencies for A4=440Hz and 10 cents deviation.
+You can tweak the results by passing the following parameters:
+
+    -f, --frequency <frequency>      A4 reference frequency (in Hz). Default is 440 Hz
+    -c, --cents <variation>          Variation allowed, in cents. Default is 10 cents.
+    -h, --help                       Prints this help.
+
+
