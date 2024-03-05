@@ -60,7 +60,7 @@ end
 Frequency = Struct.new(:min_boundary, :min_acceptable, :central, :max_acceptable, :max_boundary)
 frequencies = []
 
-# we calculate the frequencies for 6 octaves + 1 note, from C0 to C6
+# we calculate the frequencies for 7 octaves, from C0 to C6
 for note in -57..26 do
   central_freq = (A4_reference * 2 ** (note / 12.0)).round(1)
 
@@ -90,6 +90,7 @@ puts "  // Allowed range = #{cents} cents\n\n"
 
 note_names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
+# lets display the array:
 # i is note from 0 to 11
 # j is octave from 0 to 6
 for i in 0..11 do
