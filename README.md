@@ -4,8 +4,9 @@ Tuner for analog synths
 Forked from Jos Bouten's code (https://github.com/josbouten/Tune-O-Matic)
 
 Portions of code from:
- - Amanda Ghassaei's Instructables https://www.instructables.com/Arduino-Frequency-Detection/
+ - Amanda Ghassaei's Instructables https://www.instructables.com/Arduino-Frequency-Detection
  - Sam's LookMumNoComputer https://www.lookmumnocomputer.com/projects#/1222-performance-vco
+ - Eric Matecki's Tune-OO-Matic https://gitlab.com/matecki_kosmo/tune-oo-matic
 
 The Tune-O-Matic firmware samples an analog signal, tries to detect the rising edges, measures the time between each cycle, averages the values, converts the result to a frequency, compares that frequency to a table of frequencies/notes pairs and finally displays the corresponding note, and if it's above, below or in-tune.
 
