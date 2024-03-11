@@ -45,14 +45,13 @@
 
 */
 
+// uncomment to activate serial output and LEDs test patterns
 //#define DEBUG
 
-#define COMMON_CATHODE 1
-#define COMMON_ANODE   2
-//
-// SET YOUR DISPLAY TYPE HERE
-//
-#define LED_DISPLAY_TYPE COMMON_ANODE
+// uncomment the corresponding 7-segment display
+#define COMMON_ANODE
+//#define COMMON_CATHODE
+
 
 // choose your charset. Uncomment the following lines to select either large or small characters:
 #define LARGE_G
@@ -70,16 +69,15 @@
 #define LED_SHARP_PIN   17    // A3 (sharp)
 
 // 9 segment display output pins;
-#define LEDE  2
-#define LEDD  3
-#define LEDC  4
-#define LEDDP 5
-#define LEDB  9
 #define LEDA  8
+#define LEDB  9
+#define LEDC  4
+#define LEDD  3
+#define LEDE  2
 #define LEDF  7
 #define LEDG  6
+#define LEDDP 5
 
-// #define CLIPPING_LED 13 // not used?
 
 // Data storage variables.
 byte newData  = 0;
@@ -98,7 +96,7 @@ uint16_t frequency = 0;
  * 500kHz / 13 = 38461,538461538
  * 
  * As we only want integers, but with better precision, TIMER_RATE is int((500kHz / 13) x 10)
- * To correct the 10x TIMER_RATE_10 is equal to TIMER_RATE
+ * To correct the 10x factor, TIMER_RATE_10 is equal to TIMER_RATE
  */
 
 #define TIMER_RATE 384615
@@ -442,26 +440,20 @@ void setLeds(uint8_t LEDs, uint8_t digit)
   digitalWrite(LED_INTUNE_PIN,  LEDs & (1 << 1) ? HIGH : LOW);  // in-tune
   digitalWrite(LED_SHARP_PIN,   LEDs & (1 << 0) ? HIGH : LOW);  // sharp
 
-  if (LED_DISPLAY_TYPE == COMMON_CATHODE) {
-    // Decode led pattern and switch on/off the leds.          mask
-    digitalWrite(LEDE,  digit & (1 << 7) ? LOW : HIGH);     // 10000000
-    digitalWrite(LEDD,  digit & (1 << 6) ? LOW : HIGH);     // 01000000
-    digitalWrite(LEDC,  digit & (1 << 5) ? LOW : HIGH);     // 00100000
-    digitalWrite(LEDDP, digit & (1 << 4) ? LOW : HIGH);     // 00010000
-    digitalWrite(LEDB,  digit & (1 << 3) ? LOW : HIGH);     // 00001000
-    digitalWrite(LEDA,  digit & (1 << 2) ? LOW : HIGH);     // 00000100
-    digitalWrite(LEDF,  digit & (1 << 1) ? LOW : HIGH);     // 00000010
-    digitalWrite(LEDG,  digit & (1 << 0) ? LOW : HIGH);     // 00000001
-  } else {
-    digitalWrite(LEDE,  digit & (1 << 7) ? LOW : HIGH);
-    digitalWrite(LEDD,  digit & (1 << 6) ? LOW : HIGH);
-    digitalWrite(LEDC,  digit & (1 << 5) ? LOW : HIGH);
-    digitalWrite(LEDDP, digit & (1 << 4) ? LOW : HIGH);
-    digitalWrite(LEDB,  digit & (1 << 3) ? LOW : HIGH);
-    digitalWrite(LEDA,  digit & (1 << 2) ? LOW : HIGH);
-    digitalWrite(LEDF,  digit & (1 << 1) ? LOW : HIGH);
-    digitalWrite(LEDG,  digit & (1 << 0) ? LOW : HIGH);
-  }
+  // Decode 7-segment pattern and switch on/off the leds.
+#ifdef COMMON_ANODE
+  digit = ~digit;   // invert pattern when COMMON_ANODE display is used
+#endif
+
+  //                                                         mask
+  digitalWrite(LEDE,  digit & (1 << 7) ? HIGH : LOW);     // 10000000
+  digitalWrite(LEDD,  digit & (1 << 6) ? HIGH : LOW);     // 01000000
+  digitalWrite(LEDC,  digit & (1 << 5) ? HIGH : LOW);     // 00100000
+  digitalWrite(LEDDP, digit & (1 << 4) ? HIGH : LOW);     // 00010000
+  digitalWrite(LEDB,  digit & (1 << 3) ? HIGH : LOW);     // 00001000
+  digitalWrite(LEDA,  digit & (1 << 2) ? HIGH : LOW);     // 00000100
+  digitalWrite(LEDF,  digit & (1 << 1) ? HIGH : LOW);     // 00000010
+  digitalWrite(LEDG,  digit & (1 << 0) ? HIGH : LOW);     // 00000001
 }
 
 
