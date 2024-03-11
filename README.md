@@ -21,6 +21,7 @@ The code is compatible with the following hardwares:
  - https://github.com/MyModularJourney/Tuna
  - https://www.davidhaillant.com/category/electronic-projects/utility-modules/tuner/
 
+LMNC Forum about Tune-O-Matic tuner: https://lookmumnocomputer.discourse.group/t/tune-o-matic-tuner/36
 
 ## generating frequency data
 The firmwares already contains values for A4=440Hz and 6 cents deviation allowed.
