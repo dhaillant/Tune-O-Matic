@@ -46,7 +46,7 @@
 */
 
 // uncomment to activate serial output and LEDs test patterns
-//#define DEBUG
+#define DEBUG
 
 // uncomment the corresponding 7-segment display
 #define COMMON_ANODE
@@ -415,20 +415,30 @@ const uint8_t led_digits[] = {
 
 void test_digits(int delayTime)
 {
-  setLeds(LED_FLAT,    led_digits[CHAR_OFF]);
+  //setLeds(LED_FLAT,    led_digits[CHAR_OFF]);
+  setLeds(LED_FLAT,    CHAR_OFF);
   delay(delayTime);
-  setLeds(LED_IN_TUNE, led_digits[CHAR_OFF]);
+  //setLeds(LED_IN_TUNE, led_digits[CHAR_OFF]);
+  setLeds(LED_IN_TUNE, CHAR_OFF);
   delay(delayTime);
-  setLeds(LED_SHARP,   led_digits[CHAR_OFF]);
+  //setLeds(LED_SHARP,   led_digits[CHAR_OFF]);
+  setLeds(LED_SHARP,   CHAR_OFF);
   delay(delayTime);
   
   for (uint8_t i = 0; i < MAX_CHARS; i++)
   {
-    setLeds(0, led_digits[i]);
+    //setLeds(0, led_digits[i]);
+    setLeds(0, i);
     delay(delayTime);
   }
 }
 
+#define DIM_DISPLAY
+#ifdef DIM_DISPLAY
+  #define DIM_LEVEL 3     // 0 to 9, lowest = brightest
+  #define DIM_MAX 4      // Dimming resolution
+  uint8_t dim_count = 0;
+#endif
 
 void setLeds(uint8_t LEDs, uint8_t digit)
 // LEDs contains the 3 bits indicating the 3 "target" LEDs
@@ -440,10 +450,31 @@ void setLeds(uint8_t LEDs, uint8_t digit)
   digitalWrite(LED_INTUNE_PIN,  LEDs & (1 << 1) ? HIGH : LOW);  // in-tune
   digitalWrite(LED_SHARP_PIN,   LEDs & (1 << 0) ? HIGH : LOW);  // sharp
 
-  // Decode 7-segment pattern and switch on/off the leds.
-#ifdef COMMON_ANODE
-  digit = ~digit;   // invert pattern when COMMON_ANODE display is used
-#endif
+  #ifdef DIM_DISPLAY
+    // if display needs to be dimmed, increment a counter, then, at certain level, replace displayed char by empty display (CHAR_OFF)
+    if (dim_count < DIM_LEVEL)
+    {
+      digit = CHAR_OFF;
+    }
+    dim_count++;
+    if (dim_count > DIM_MAX)
+    {
+      dim_count = 0;
+    }
+    #ifdef DEBUG
+      Serial.print(F("DIM "));
+      Serial.print(dim_count);
+      Serial.print(F(" | "));
+    #endif
+
+  #endif
+
+/*  
+ // Decode 7-segment pattern and switch on/off the leds.
+  #ifdef COMMON_ANODE
+    digit = ~digit;   // invert pattern when COMMON_ANODE display is used
+  #endif
+
 
   //                                                         mask
   digitalWrite(LEDE,  digit & (1 << 7) ? HIGH : LOW);     // 10000000
@@ -454,6 +485,25 @@ void setLeds(uint8_t LEDs, uint8_t digit)
   digitalWrite(LEDA,  digit & (1 << 2) ? HIGH : LOW);     // 00000100
   digitalWrite(LEDF,  digit & (1 << 1) ? HIGH : LOW);     // 00000010
   digitalWrite(LEDG,  digit & (1 << 0) ? HIGH : LOW);     // 00000001
+*/
+
+  uint8_t segments = led_digits[digit];
+  
+  // Decode 7-segment pattern and switch on/off the leds.
+  #ifdef COMMON_ANODE
+    segments = ~segments;   // invert pattern when COMMON_ANODE display is used
+  #endif
+
+
+  //                                                            mask
+  digitalWrite(LEDE,  segments & (1 << 7) ? HIGH : LOW);     // 10000000
+  digitalWrite(LEDD,  segments & (1 << 6) ? HIGH : LOW);     // 01000000
+  digitalWrite(LEDC,  segments & (1 << 5) ? HIGH : LOW);     // 00100000
+  digitalWrite(LEDDP, segments & (1 << 4) ? HIGH : LOW);     // 00010000
+  digitalWrite(LEDB,  segments & (1 << 3) ? HIGH : LOW);     // 00001000
+  digitalWrite(LEDA,  segments & (1 << 2) ? HIGH : LOW);     // 00000100
+  digitalWrite(LEDF,  segments & (1 << 1) ? HIGH : LOW);     // 00000010
+  digitalWrite(LEDG,  segments & (1 << 0) ? HIGH : LOW);     // 00000001
 }
 
 
@@ -476,7 +526,7 @@ void setup() {
 
 
 #ifdef DEBUG
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   test_digits(200);  // run some LEDs showcase
 
@@ -511,6 +561,7 @@ void setup() {
 void loop() {
   frequency = (TIMER_RATE_10 * 100) / (averaged_period >> 4); // Timer rate with an extra zero/period.
 
+/*
   if (frequency < frequencyTable[0]) {
     // do not test for frequencies and display "0"
     setLeds(LED_NONE, led_digits[CHAR_ZERO]);
@@ -582,10 +633,84 @@ void loop() {
     // do not test for frequencies and display "-"
     setLeds(LED_NONE, led_digits[CHAR_NEG]);
   }
+*/
+
+  if (frequency < frequencyTable[0]) {
+    // do not test for frequencies and display "0"
+    setLeds(LED_NONE, CHAR_ZERO);
+  }
+
+  // C
+  testNote( 0, LED_FLAT,    CHAR_C);
+  testNote( 1, LED_IN_TUNE, CHAR_C);
+  testNote( 2, LED_SHARP,   CHAR_C);
+
+  // C#
+  testNote( 3, LED_FLAT,    CHAR_CS);
+  testNote( 4, LED_IN_TUNE, CHAR_CS);
+  testNote( 5, LED_SHARP,   CHAR_CS);
+
+  // D
+  testNote( 6, LED_FLAT,    CHAR_D);
+  testNote( 7, LED_IN_TUNE, CHAR_D);
+  testNote( 8, LED_SHARP,   CHAR_D);
+
+  // D#
+  testNote( 9, LED_FLAT,    CHAR_DS);
+  testNote(10, LED_IN_TUNE, CHAR_DS);
+  testNote(11, LED_SHARP,   CHAR_DS);
+
+  // E
+  testNote(12, LED_FLAT,    CHAR_E);
+  testNote(13, LED_IN_TUNE, CHAR_E);
+  testNote(14, LED_SHARP,   CHAR_E);
+
+  // F
+  testNote(15, LED_FLAT,    CHAR_F);
+  testNote(16, LED_IN_TUNE, CHAR_F);
+  testNote(17, LED_SHARP,   CHAR_F);
+
+  // F#
+  testNote(18, LED_FLAT,    CHAR_FS);
+  testNote(19, LED_IN_TUNE, CHAR_FS);
+  testNote(20, LED_SHARP,   CHAR_FS);
+
+  // G
+  testNote(21, LED_FLAT,    CHAR_G);
+  testNote(22, LED_IN_TUNE, CHAR_G);
+  testNote(23, LED_SHARP,   CHAR_G);
+
+  // G#
+  testNote(24, LED_FLAT,    CHAR_GS);
+  testNote(25, LED_IN_TUNE, CHAR_GS);
+  testNote(26, LED_SHARP,   CHAR_GS);
+
+  // A
+  testNote(27, LED_FLAT,    CHAR_A);
+  testNote(28, LED_IN_TUNE, CHAR_A);
+  testNote(29, LED_SHARP,   CHAR_A);
+
+  // A#
+  testNote(30, LED_FLAT,    CHAR_AS);
+  testNote(31, LED_IN_TUNE, CHAR_AS);
+  testNote(32, LED_SHARP,   CHAR_AS);
+
+  // B
+  testNote(33, LED_FLAT,    CHAR_B);
+  testNote(34, LED_IN_TUNE, CHAR_B);
+  testNote(35, LED_SHARP,   CHAR_B);
+
+  // TOO HIGH FOR NOW
+  if (frequency > 10180)
+  {
+    // do not test for frequencies and display "-"
+    setLeds(LED_NONE, CHAR_NEG);
+  }
 
 #ifdef DEBUG
+  Serial.print(F("period: "));
   Serial.print(averaged_period >> 4);
-  Serial.print(F(" "));
+  Serial.print(F(" freq: "));
   Serial.print(frequency);
   Serial.println(F(" dHz"));
 #endif
