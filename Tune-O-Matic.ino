@@ -46,7 +46,7 @@
 */
 
 // uncomment to activate serial output and LEDs test patterns
-//#define DEBUG
+#define DEBUG
 
 // uncomment the corresponding 7-segment display
 #define COMMON_ANODE
@@ -259,6 +259,96 @@ void reset(){   // Clear out some variables.
 
 
 
+
+// Define the Note struct
+struct Note {
+    uint16_t highestFrequency;  // Highest frequency for the note
+    uint16_t lowestFrequency;   // Lowest frequency for the note
+    uint16_t lowerRange;        // Lower range in tune
+    uint16_t upperRange;        // Upper range in tune
+};
+
+// Define the number of octaves and notes per octave
+const int numOctaves = 7;
+const int numNotesPerOctave = 12;
+const float cents = 6.0;
+
+// Create a 2D array to hold notes for each octave and each note in the octave
+Note notes[numOctaves][numNotesPerOctave];
+
+// 4 x 2 bytes per Note struct
+// x 12 per octave = 96 bytes
+// x 7 for 7 octaves = 672 bytes
+
+const float A4_reference = 4400.0;
+// Function to calculate the frequency, in dHz (1/10 of Hz), of a note
+// noteNumber is the MIDI note number, where C0 = 12 and A4 = 69
+float calculateFrequency(int noteNumber)
+{
+  return A4_reference * pow(2.0, (noteNumber - 69) / 12.0);
+}
+
+// Function to calculate the frequency ranges for a given note's central frequency
+void calculateRanges(float central_frequency, uint16_t &min_boundary, uint16_t &min_acceptable, uint16_t &max_acceptable, uint16_t &max_boundary)
+{
+  min_boundary   = round(central_frequency * pow(2.0, -50.0 / 1200.0));
+  min_acceptable = round(central_frequency * pow(2.0, -cents / 1200.0));
+  max_acceptable = round(central_frequency * pow(2.0, cents / 1200.0));
+  max_boundary   = round(central_frequency * pow(2.0, 50.0 / 1200.0));
+}
+
+void setup_all_frequencies(void)
+{
+  float central_frequency = 0.0;
+  
+  uint16_t min_boundary = 0;
+  uint16_t min_acceptable = 0;
+  uint16_t max_acceptable = 0;
+  uint16_t max_boundary = 0;
+
+  uint8_t midiNoteNumber = 0;
+  
+  // Populate the notes array
+  for (uint8_t octave = 0; octave < numOctaves; octave++)       // 0 to 6
+  {
+    for (uint8_t note = 0; note < numNotesPerOctave; note++)    // 0 to 11
+    {
+      // Calculate the MIDI note number
+      midiNoteNumber = (octave * numNotesPerOctave) + note + 12;    // start at C0 = 12
+
+      // Calculate the frequency for the note
+      central_frequency = calculateFrequency(midiNoteNumber);
+
+      // Calculate the frequency ranges
+      calculateRanges(central_frequency, min_boundary, min_acceptable, max_acceptable, max_boundary);
+
+      // Populate the Note struct
+      notes[octave][note].highestFrequency = max_boundary;
+      notes[octave][note].lowestFrequency = min_boundary;
+      notes[octave][note].lowerRange = min_acceptable;
+      notes[octave][note].upperRange = max_acceptable;
+
+      #ifdef DEBUG
+        Serial.print(F("Note #: "));
+        Serial.print(midiNoteNumber);
+        Serial.print(F(" Freq.: "));
+        Serial.print(central_frequency);
+        Serial.print(F("  \t| "));
+        Serial.print(min_boundary);
+        Serial.print(F("\t| "));
+        Serial.print(min_acceptable);
+        Serial.print(F("\t| "));
+        Serial.print(max_acceptable);
+        Serial.print(F("\t| "));
+        Serial.print(max_boundary);
+        Serial.println(F("\t|"));
+      #endif
+    }
+  }
+}
+
+
+
 #define NR_COLUMNS 14
 
 const uint16_t frequencyTable[] = {
@@ -270,6 +360,9 @@ const uint16_t frequencyTable[] = {
   // Allowed range = 6.0 cents
 
   // 504 x 2 bytes = 1008 bytes
+  // 7 octaves: 14 x 2 bytes = 28 bytes
+  // x 3 per note = 84 bytes
+  // x 12 for an octave = 1008 bytes
 
   158,  162,  317,  325,  635,  651,  1270, 1303, 2541, 2607, 5083, 5214,  10167,  10428,  // C
   162,  164,  325,  328,  651,  656,  1303, 1312, 2607, 2625, 5214, 5250,  10428,  10501,  
@@ -476,13 +569,11 @@ void setup() {
 
 
 #ifdef DEBUG
-  Serial.begin(9600);
+  Serial.begin(115200);
 
-  test_digits(200);  // run some LEDs showcase
+  //test_digits(200);  // run some LEDs showcase
 
-  Serial.println(F("Tune-O-Matic"));
-  Serial.print(F("Lowest freq.:"));
-  Serial.println(frequencyTable[0]);
+  Serial.println(F("\nTune-O-Matic"));
   Serial.print(F("Lowest freq.:"));
   Serial.println(frequencyTable[0]);
 #endif
@@ -505,6 +596,10 @@ void setup() {
   ADCSRA |= (1 << ADSC);  // Start ADC measurements.
 
   sei(); // Enable interrupts.
+
+
+  setup_all_frequencies();
+  //while (true) {}
 }
 
 
