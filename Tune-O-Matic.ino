@@ -484,85 +484,7 @@ uint8_t find_note(uint16_t frequency, uint8_t &octave, uint8_t &tuning)
   return note_found;
 }
 
-/*
-uint8_t find_tuning(uint8_t note, uint16_t frequency)
-{
-  uint8_t tuning = -1;
 
-  return tuning;
-}
-*/
-
-
-/*
-#define NR_COLUMNS 14
-
-const uint16_t frequencyTable[] = {
-  // Note, this table contains frequency values multiplied by 10 
-  // so that one decimal value is included.
-  // A4 which in an equal tempered scale is at 440 Hz, is represented by 4400 in the table.
-
-  // A4 = 440 Hz
-  // Allowed range = 6.0 cents
-
-  // 504 x 2 bytes = 1008 bytes
-  // 7 octaves: 14 x 2 bytes = 28 bytes
-  // x 3 per note = 84 bytes
-  // x 12 for an octave = 1008 bytes
-
-  158,  162,  317,  325,  635,  651,  1270, 1303, 2541, 2607, 5083, 5214,  10167,  10428,  // C
-  162,  164,  325,  328,  651,  656,  1303, 1312, 2607, 2625, 5214, 5250,  10428,  10501,  
-  164,  168,  328,  336,  656,  673,  1312, 1346, 2625, 2693, 5250, 5385,  10501,  10771,  
-  168,  172,  336,  345,  673,  690,  1346, 1381, 2692, 2762, 5385, 5524,  0,  0,  // C#
-  172,  173,  345,  347,  690,  695,  1381, 1390, 2762, 2781, 5524, 5562,  0,  0,  
-  173,  178,  347,  356,  695,  713,  1390, 1426, 2781, 2853, 5562, 5706,  0,  0,  
-  178,  182,  356,  365,  713,  731,  1426, 1463, 2853, 2926, 5706, 5853,  0,  0,  // D
-  182,  184,  365,  368,  731,  736,  1463, 1473, 2926, 2946, 5853, 5893,  0,  0,  
-  184,  188,  368,  377,  736,  755,  1473, 1511, 2946, 3022, 5893, 6045,  0,  0,  
-  189,  193,  377,  387,  755,  775,  1511, 1550, 3022, 3100, 6045, 6201,  0,  0,  // D#
-  193,  195,  387,  390,  775,  780,  1550, 1561, 3100, 3122, 6201, 6244,  0,  0,  
-  195,  200,  390,  400,  780,  800,  1561, 1601, 3122, 3202, 6244, 6404,  0,  0,  
-  200,  205,  400,  410,  800,  821,  1601, 1642, 3202, 3284, 6404, 6569,  0,  0,  // E
-  205,  206,  410,  413,  821,  827,  1642, 1653, 3284, 3307, 6569, 6615,  0,  0,  
-  206,  212,  413,  424,  827,  848,  1653, 1696, 3307, 3392, 6615, 6785,  0,  0,  
-  212,  217,  424,  435,  848,  870,  1696, 1740, 3392, 3480, 6785, 6960,  0,  0,  // F
-  217,  219,  435,  438,  870,  876,  1740, 1752, 3480, 3504, 6960, 7008,  0,  0,  
-  219,  224,  438,  449,  876,  898,  1752, 1797, 3504, 3594, 7008, 7189,  0,  0,  
-  224,  230,  449,  460,  898,  921,  1797, 1843, 3594, 3687, 7189, 7374,  0,  0,  // F#
-  230,  232,  460,  464,  921,  928,  1843, 1856, 3687, 3712, 7374, 7425,  0,  0,  
-  232,  238,  464,  476,  928,  952,  1856, 1904, 3712, 3808, 7425, 7616,  0,  0,  
-  238,  244,  476,  488,  952,  976,  1904, 1953, 3808, 3906, 7616, 7812,  0,  0,  // G
-  244,  245,  488,  491,  976,  983,  1953, 1966, 3906, 3933, 7812, 7867,  0,  0,  
-  245,  252,  491,  504,  983,  1008, 1966, 2017, 3933, 4034, 7867, 8069,  0,  0,  
-  252,  258,  504,  517,  1008, 1034, 2017, 2069, 4034, 4138, 8069, 8277,  0,  0,  // G#
-  258,  260,  517,  520,  1034, 1041, 2069, 2083, 4138, 4167, 8277, 8334,  0,  0,  
-  260,  267,  520,  534,  1041, 1068, 2083, 2137, 4167, 4274, 8334, 8549,  0,  0,  
-  267,  274,  534,  548,  1068, 1096, 2137, 2192, 4274, 4384, 8549, 8769,  0,  0,  // A
-  274,  276,  548,  551,  1096, 1103, 2192, 2207, 4384, 4415, 8769, 8830,  0,  0,  
-  276,  283,  551,  566,  1103, 1132, 2207, 2264, 4415, 4528, 8830, 9057,  0,  0,  
-  283,  290,  566,  580,  1132, 1161, 2264, 2322, 4528, 4645, 9057, 9291,  0,  0,  // A#
-  290,  292,  580,  584,  1161, 1169, 2322, 2338, 4645, 4677, 9291, 9355,  0,  0,  
-  292,  299,  584,  599,  1169, 1199, 2338, 2399, 4677, 4798, 9355, 9596,  0,  0,  
-  299,  307,  599,  615,  1199, 1230, 2399, 2460, 4798, 4921, 9596, 9843,  0,  0,  // B
-  307,  309,  615,  619,  1230, 1239, 2460, 2478, 4921, 4955, 9843, 9912,  0,  0,  
-  309,  317,  619,  635,  1239, 1270, 2478, 2541, 4955, 5083, 9912, 10167, 0,  0 
-};
-*/
-/*
-void testNote(int tableIndex, uint8_t LEDs, uint8_t digit) {
-  boolean condition = false;
-  // Find an interval of frequencies which includes the measured frequency.
-  for (int i = tableIndex * NR_COLUMNS; i < tableIndex * NR_COLUMNS + NR_COLUMNS; i += 2) {
-    if ((frequencyTable[i] > 0) && (frequencyTable[i] < frequency) && (frequency < frequencyTable[i + 1])) {
-      condition = true;
-      break; // Exit the loop as soon as there is a match.
-    }
-  }
-  // If any of the conditions turns out to be true,
-  // switch on the corresponding LEDs.
-  if (condition == true) setLeds(LEDs, digit);
-}
-*/
 
 // **** Display results ****************************************
 
@@ -670,33 +592,7 @@ void test_digits(int delayTime)
   }
 }
 */
-/*
-void setLeds(uint8_t LEDs, uint8_t digit)
-// LEDs contains the 3 bits indicating the 3 "target" LEDs
-// bit 0 is "sharp", bit 1 is "in-tune" and bit 2 is "flat"
-// digit describes how to draw the character on the 7-segment display
-// it's a byte, and each bit is a segment, where 0 = segment is OFF, 1 = segment is ON
-{
-  digitalWrite(LED_FLAT_PIN,    LEDs & (1 << 2) ? HIGH : LOW);  // flat
-  digitalWrite(LED_INTUNE_PIN,  LEDs & (1 << 1) ? HIGH : LOW);  // in-tune
-  digitalWrite(LED_SHARP_PIN,   LEDs & (1 << 0) ? HIGH : LOW);  // sharp
 
-  // Decode 7-segment pattern and switch on/off the leds.
-#ifdef COMMON_ANODE
-  digit = ~digit;   // invert pattern when COMMON_ANODE display is used
-#endif
-
-  //                                                         mask
-  digitalWrite(LEDE,  digit & (1 << 7) ? HIGH : LOW);     // 10000000
-  digitalWrite(LEDD,  digit & (1 << 6) ? HIGH : LOW);     // 01000000
-  digitalWrite(LEDC,  digit & (1 << 5) ? HIGH : LOW);     // 00100000
-  digitalWrite(LEDDP, digit & (1 << 4) ? HIGH : LOW);     // 00010000
-  digitalWrite(LEDB,  digit & (1 << 3) ? HIGH : LOW);     // 00001000
-  digitalWrite(LEDA,  digit & (1 << 2) ? HIGH : LOW);     // 00000100
-  digitalWrite(LEDF,  digit & (1 << 1) ? HIGH : LOW);     // 00000010
-  digitalWrite(LEDG,  digit & (1 << 0) ? HIGH : LOW);     // 00000001
-}
-*/
 
 
 void display_digit(uint8_t digit)
@@ -833,80 +729,6 @@ void loop()
 
   display_note(note_found);
   display_tuning(tuning);
-
-/*
-  if (frequency < frequencyTable[0]) {
-    // do not test for frequencies and display "0"
-    setLeds(LED_NONE, led_digits[CHAR_ZERO]);
-  }
-
-  // C
-  testNote( 0, LED_FLAT,    led_digits[CHAR_C]);
-  testNote( 1, LED_IN_TUNE, led_digits[CHAR_C]);
-  testNote( 2, LED_SHARP,   led_digits[CHAR_C]);
-
-  // C#
-  testNote( 3, LED_FLAT,    led_digits[CHAR_CS]);
-  testNote( 4, LED_IN_TUNE, led_digits[CHAR_CS]);
-  testNote( 5, LED_SHARP,   led_digits[CHAR_CS]);
-
-  // D
-  testNote( 6, LED_FLAT,    led_digits[CHAR_D]);
-  testNote( 7, LED_IN_TUNE, led_digits[CHAR_D]);
-  testNote( 8, LED_SHARP,   led_digits[CHAR_D]);
-
-  // D#
-  testNote( 9,  LED_FLAT,    led_digits[CHAR_DS]);
-  testNote( 10, LED_IN_TUNE, led_digits[CHAR_DS]);
-  testNote( 11, LED_SHARP,   led_digits[CHAR_DS]);
-
-  // E
-  testNote(12, LED_FLAT,    led_digits[CHAR_E]);
-  testNote(13, LED_IN_TUNE, led_digits[CHAR_E]);
-  testNote(14, LED_SHARP,   led_digits[CHAR_E]);
-
-  // F
-  testNote(15, LED_FLAT,    led_digits[CHAR_F]);
-  testNote(16, LED_IN_TUNE, led_digits[CHAR_F]);
-  testNote(17, LED_SHARP,   led_digits[CHAR_F]);
-
-  // F#
-  testNote(18, LED_FLAT,    led_digits[CHAR_FS]);
-  testNote(19, LED_IN_TUNE, led_digits[CHAR_FS]);
-  testNote(20, LED_SHARP,   led_digits[CHAR_FS]);
-
-  // G
-  testNote(21, LED_FLAT,    led_digits[CHAR_G]);
-  testNote(22, LED_IN_TUNE, led_digits[CHAR_G]);
-  testNote(23, LED_SHARP,   led_digits[CHAR_G]);
-
-  // G#
-  testNote(24, LED_FLAT,    led_digits[CHAR_GS]);
-  testNote(25, LED_IN_TUNE, led_digits[CHAR_GS]);
-  testNote(26, LED_SHARP,   led_digits[CHAR_GS]);
-
-  // A
-  testNote(27, LED_FLAT,    led_digits[CHAR_A]);
-  testNote(28, LED_IN_TUNE, led_digits[CHAR_A]);
-  testNote(29, LED_SHARP,   led_digits[CHAR_A]);
-
-  // A#
-  testNote(30, LED_FLAT,    led_digits[CHAR_AS]);
-  testNote(31, LED_IN_TUNE, led_digits[CHAR_AS]);
-  testNote(32, LED_SHARP,   led_digits[CHAR_AS]);
-
-  // B
-  testNote(33, LED_FLAT,    led_digits[CHAR_B]);
-  testNote(34, LED_IN_TUNE, led_digits[CHAR_B]);
-  testNote(35, LED_SHARP,   led_digits[CHAR_B]);
-
-  // TOO HIGH FOR NOW
-  if (frequency > 10180)
-  {
-    // do not test for frequencies and display "-"
-    setLeds(LED_NONE, led_digits[CHAR_NEG]);
-  }
-*/
 
   #ifdef DEBUG
     Serial.print(averaged_period >> 4);
