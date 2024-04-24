@@ -86,7 +86,7 @@ byte prevData = 0;
 uint16_t period = 0;
 uint32_t averaged_period = 0;
 
-uint16_t frequency = 0;
+//uint16_t frequency = 0;
 
 #define HALF_SAMPLE_VALUE 127
 
@@ -384,7 +384,9 @@ void setup_all_frequencies(void)
       notes[octave][note].upperRange = max_acceptable;
 
       #ifdef DEBUG
-        Serial.print(F("Note #: "));
+        Serial.print(F("Octave #: "));
+        Serial.print(octave);
+        Serial.print(F(" Note #: "));
         Serial.print(midiNoteNumber);
         Serial.print(F(" Freq.: "));
         Serial.print(central_frequency);
@@ -407,14 +409,25 @@ void setup_all_frequencies(void)
 uint8_t find_octave(uint16_t frequency)
 {
   uint8_t octave_found = 0xFF;
+//  Serial.print(F(" O:"));
 
   for (uint8_t octave = 0; octave < numOctaves; octave++)       // 0 to 6
   {
-    if (frequency >= notes[octave][0].lowestFrequency && frequency < notes[octave][numNotesPerOctave].highestFrequency)
+//    Serial.print(octave);
+//    Serial.print(F(" low:"));
+//    Serial.print(notes[octave][0].lowestFrequency);
+//    Serial.print(F(" high:"));
+//    Serial.print(notes[octave][numNotesPerOctave - 1].highestFrequency);
+//    Serial.print(F(" "));
+
+    if ((frequency >= notes[octave][0].lowestFrequency) && (frequency < notes[octave][numNotesPerOctave - 1].highestFrequency))
     {
       octave_found = octave;
     }
   }
+//  Serial.print(F(" found: "));
+//  Serial.print(octave_found);
+//  Serial.print(F("| "));
 
   return octave_found;
 }
@@ -442,7 +455,7 @@ uint8_t find_note(uint16_t frequency, uint8_t &octave, uint8_t &tuning)
     // then, if octave has been identified, find the note within the octave
     for (uint8_t note = 0; note < numNotesPerOctave; note++)    // 0 to 11
     {
-      if (frequency >= notes[octave][note].lowestFrequency && frequency < notes[octave][note].highestFrequency)
+      if ((frequency >= notes[octave][note].lowestFrequency) && (frequency < notes[octave][note].highestFrequency))
       {
         note_found = note;
       }
@@ -715,12 +728,24 @@ void setup() {
   setup_adc();
 }
 
-
+//#define TEST_FIND_NOTE
+#ifdef TEST_FIND_NOTE
+  uint16_t test_increment = 0;
+#endif
 
 // **** Main loop ******************************************
 void loop()
 {
+
+  uint16_t frequency = 0;
   frequency = (TIMER_RATE_10 * 100) / (averaged_period >> 4); // Timer rate with an extra zero/period.
+
+  #ifdef TEST_FIND_NOTE
+    // overrides frequency calculation
+    frequency = test_increment;
+    test_increment += 10;
+    if (test_increment > 25000) { test_increment = 0; }
+  #endif
 
   uint8_t octave = 0xFF;
   uint8_t tuning = 0xFF;
