@@ -107,15 +107,15 @@ unsigned int time = 0;    // Keeps time and sends values to store in timer[] occ
 int timer[BUFFER_SIZE];   // Storage for timing of events.
 int slope[BUFFER_SIZE];   // Storage for slope of events.
 unsigned int totalTimer;  // Used to calculate period.
-byte index = 0;           // Current storage index.
-int maxSlope = 0;         // Used to calculate max slope as trigger point.
+byte index      = 0;      // Current storage index.
+int maxSlope    = 0;      // Used to calculate max slope as trigger point.
 int newSlope;             // Storage for incoming slope data.
 
-// Variables for decided whether you have a match.
+// Variables for deciding whether you have a match.
 #define MAX_NO_MATCH_VALUE 9
-byte noMatch = 0;         // Counts how many non-matches you've received to reset variables if it's been too long.
+byte noMatch  =   0;      // Counts how many non-matches you've received to reset variables if it's been too long.
 byte slopeTol = 100;      // Slope tolerance - adjust this if you need.    *** 100 required here for dealing with square-ish signals ***
-int timerTol = 10;        // Timer tolerance - adjust this if you need.
+int timerTol  =  10;      // Timer tolerance - adjust this if you need.
 
 // Variables for amp detection.
 unsigned int ampTimer = 0;
@@ -226,38 +226,38 @@ void reset(){   // Clear out some variables.
  * Example of data generated (7 octaves from C0 (MIDI #12) to B6 (MIDI #95))
  * with 6 cents in-tune range:
 
-  Note #: 12 Freq.: 163.52   | 159 | 163 | 164 | 168 |
-  Note #: 13 Freq.: 173.24    | 168 | 173 | 174 | 178 |
-  Note #: 14 Freq.: 183.54    | 178 | 183 | 184 | 189 |
-  Note #: 15 Freq.: 194.45    | 189 | 194 | 195 | 200 |
-  Note #: 16 Freq.: 206.02    | 200 | 205 | 207 | 212 |
-  Note #: 17 Freq.: 218.27    | 212 | 218 | 219 | 225 |
-  Note #: 18 Freq.: 231.25    | 225 | 230 | 232 | 238 |
-  Note #: 19 Freq.: 245.00    | 238 | 244 | 246 | 252 |
-  Note #: 20 Freq.: 259.57    | 252 | 259 | 260 | 267 |
-  Note #: 21 Freq.: 275.00    | 267 | 274 | 276 | 283 |
-  Note #: 22 Freq.: 291.35    | 283 | 290 | 292 | 300 |
-  Note #: 23 Freq.: 308.68    | 300 | 308 | 310 | 318 |
-  Note #: 24 Freq.: 327.03    | 318 | 326 | 328 | 337 |
-  Note #: 25 Freq.: 346.48    | 337 | 345 | 348 | 357 |
-  Note #: 26 Freq.: 367.08    | 357 | 366 | 368 | 378 |
-  Note #: 27 Freq.: 388.91    | 378 | 388 | 390 | 400 |
-  Note #: 28 Freq.: 412.03    | 400 | 411 | 413 | 424 |
-  Note #: 29 Freq.: 436.54    | 424 | 435 | 438 | 449 |
-  Note #: 30 Freq.: 462.49    | 449 | 461 | 464 | 476 |
-  Note #: 31 Freq.: 489.99    | 476 | 488 | 492 | 504 |
-  Note #: 32 Freq.: 519.13    | 504 | 517 | 521 | 534 |
-  Note #: 33 Freq.: 550.00    | 534 | 548 | 552 | 566 |
-  Note #: 34 Freq.: 582.70    | 566 | 581 | 585 | 600 |
-  Note #: 35 Freq.: 617.35    | 600 | 615 | 619 | 635 |
-  Note #: 36 Freq.: 654.06    | 635 | 652 | 656 | 673 |
-  Note #: 37 Freq.: 692.96    | 673 | 691 | 695 | 713 |
-  Note #: 38 Freq.: 734.16    | 713 | 732 | 737 | 756 |
-  Note #: 39 Freq.: 777.82    | 756 | 775 | 781 | 801 |
-  Note #: 40 Freq.: 824.07    | 801 | 821 | 827 | 848 |
-  Note #: 41 Freq.: 873.07    | 848 | 870 | 876 | 899 |
-  Note #: 42 Freq.: 924.99    | 899 | 922 | 928 | 952 |
-  Note #: 43 Freq.: 979.99    | 952 | 977 | 983 | 1009  |
+  Note #: 12 Freq.: 163.52    | 159   | 163   | 164   | 168   |
+  Note #: 13 Freq.: 173.24    | 168   | 173   | 174   | 178   |
+  Note #: 14 Freq.: 183.54    | 178   | 183   | 184   | 189   |
+  Note #: 15 Freq.: 194.45    | 189   | 194   | 195   | 200   |
+  Note #: 16 Freq.: 206.02    | 200   | 205   | 207   | 212   |
+  Note #: 17 Freq.: 218.27    | 212   | 218   | 219   | 225   |
+  Note #: 18 Freq.: 231.25    | 225   | 230   | 232   | 238   |
+  Note #: 19 Freq.: 245.00    | 238   | 244   | 246   | 252   |
+  Note #: 20 Freq.: 259.57    | 252   | 259   | 260   | 267   |
+  Note #: 21 Freq.: 275.00    | 267   | 274   | 276   | 283   |
+  Note #: 22 Freq.: 291.35    | 283   | 290   | 292   | 300   |
+  Note #: 23 Freq.: 308.68    | 300   | 308   | 310   | 318   |
+  Note #: 24 Freq.: 327.03    | 318   | 326   | 328   | 337   |
+  Note #: 25 Freq.: 346.48    | 337   | 345   | 348   | 357   |
+  Note #: 26 Freq.: 367.08    | 357   | 366   | 368   | 378   |
+  Note #: 27 Freq.: 388.91    | 378   | 388   | 390   | 400   |
+  Note #: 28 Freq.: 412.03    | 400   | 411   | 413   | 424   |
+  Note #: 29 Freq.: 436.54    | 424   | 435   | 438   | 449   |
+  Note #: 30 Freq.: 462.49    | 449   | 461   | 464   | 476   |
+  Note #: 31 Freq.: 489.99    | 476   | 488   | 492   | 504   |
+  Note #: 32 Freq.: 519.13    | 504   | 517   | 521   | 534   |
+  Note #: 33 Freq.: 550.00    | 534   | 548   | 552   | 566   |
+  Note #: 34 Freq.: 582.70    | 566   | 581   | 585   | 600   |
+  Note #: 35 Freq.: 617.35    | 600   | 615   | 619   | 635   |
+  Note #: 36 Freq.: 654.06    | 635   | 652   | 656   | 673   |
+  Note #: 37 Freq.: 692.96    | 673   | 691   | 695   | 713   |
+  Note #: 38 Freq.: 734.16    | 713   | 732   | 737   | 756   |
+  Note #: 39 Freq.: 777.82    | 756   | 775   | 781   | 801   |
+  Note #: 40 Freq.: 824.07    | 801   | 821   | 827   | 848   |
+  Note #: 41 Freq.: 873.07    | 848   | 870   | 876   | 899   |
+  Note #: 42 Freq.: 924.99    | 899   | 922   | 928   | 952   |
+  Note #: 43 Freq.: 979.99    | 952   | 977   | 983   | 1009  |
   Note #: 44 Freq.: 1038.26   | 1009  | 1035  | 1042  | 1069  |
   Note #: 45 Freq.: 1100.00   | 1069  | 1096  | 1104  | 1132  |
   Note #: 46 Freq.: 1165.41   | 1132  | 1161  | 1169  | 1200  |
@@ -298,18 +298,18 @@ void reset(){   // Clear out some variables.
   Note #: 81 Freq.: 8800.00   | 8549  | 8770  | 8831  | 9058  |
   Note #: 82 Freq.: 9323.27   | 9058  | 9291  | 9356  | 9596  |
   Note #: 83 Freq.: 9877.67   | 9596  | 9843  | 9912  | 10167 |
-  Note #: 84 Freq.: 10465.02    | 10167 | 10429 | 10501 | 10772 |
-  Note #: 85 Freq.: 11087.30    | 10772 | 11049 | 11126 | 11412 |
-  Note #: 86 Freq.: 11746.59    | 11412 | 11706 | 11787 | 12091 |
-  Note #: 87 Freq.: 12445.08    | 12091 | 12402 | 12488 | 12810 |
-  Note #: 88 Freq.: 13185.10    | 12810 | 13139 | 13231 | 13571 |
-  Note #: 89 Freq.: 13969.13    | 13571 | 13921 | 14018 | 14378 |
-  Note #: 90 Freq.: 14799.78    | 14378 | 14749 | 14851 | 15233 |
-  Note #: 91 Freq.: 15679.82    | 15233 | 15626 | 15734 | 16139 |
-  Note #: 92 Freq.: 16612.19    | 16139 | 16555 | 16670 | 17099 |
-  Note #: 93 Freq.: 17600.00    | 17099 | 17539 | 17661 | 18116 |
-  Note #: 94 Freq.: 18646.55    | 18116 | 18582 | 18711 | 19193 |
-  Note #: 95 Freq.: 19755.33    | 19193 | 19687 | 19824 | 20334 |
+  Note #: 84 Freq.: 10465.02  | 10167 | 10429 | 10501 | 10772 |
+  Note #: 85 Freq.: 11087.30  | 10772 | 11049 | 11126 | 11412 |
+  Note #: 86 Freq.: 11746.59  | 11412 | 11706 | 11787 | 12091 |
+  Note #: 87 Freq.: 12445.08  | 12091 | 12402 | 12488 | 12810 |
+  Note #: 88 Freq.: 13185.10  | 12810 | 13139 | 13231 | 13571 |
+  Note #: 89 Freq.: 13969.13  | 13571 | 13921 | 14018 | 14378 |
+  Note #: 90 Freq.: 14799.78  | 14378 | 14749 | 14851 | 15233 |
+  Note #: 91 Freq.: 15679.82  | 15233 | 15626 | 15734 | 16139 |
+  Note #: 92 Freq.: 16612.19  | 16139 | 16555 | 16670 | 17099 |
+  Note #: 93 Freq.: 17600.00  | 17099 | 17539 | 17661 | 18116 |
+  Note #: 94 Freq.: 18646.55  | 18116 | 18582 | 18711 | 19193 |
+  Note #: 95 Freq.: 19755.33  | 19193 | 19687 | 19824 | 20334 |
 
  * Generated data can be checked on serial monitor: enable DEBUG flag to visualize
  *
