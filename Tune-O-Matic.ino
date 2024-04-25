@@ -46,7 +46,7 @@
 */
 
 // uncomment to activate serial output and LEDs test patterns
-#define DEBUG
+//#define DEBUG
 
 // uncomment the corresponding 7-segment display
 #define COMMON_ANODE
