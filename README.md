@@ -24,13 +24,21 @@ The code is compatible with the following hardwares:
 LMNC Forum about Tune-O-Matic tuner: https://lookmumnocomputer.discourse.group/t/tune-o-matic-tuner/36
 
 ## generating frequency data
-The firmwares already contains values for A4=440Hz and 6 cents deviation allowed.
+The firmware creates itself the complete frequency data. *No need to use the ruby script anymore.*
 
-Use the ruby script **freqs_ranges.rb**:
+The generated values are valid for A4=440Hz and 6 cents maximum deviation allowed.
+
+You can edit the code and modify the values for A4 `A4_reference` (in 1/10th of Hertz) and for in-tune range `cents` (in cents).
+
+---
+**Deprecated:**
+(will be removed)
+
+Use the ruby script `freqs_ranges.rb`:
 
   ruby freqs_ranges.rb
 
-Copy and paste the results in the Arduino code, in the array *frequencyTable*
+~~Copy and paste the results in the Arduino code, in the array *frequencyTable*~~
 By default, the script generates frequencies for A4=440Hz and 10 cents deviation.
 You can tweak the results by passing the following parameters:
 

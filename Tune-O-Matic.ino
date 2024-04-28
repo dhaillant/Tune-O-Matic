@@ -409,25 +409,14 @@ void setup_all_frequencies(void)
 uint8_t find_octave(uint16_t frequency)
 {
   uint8_t octave_found = 0xFF;
-//  Serial.print(F(" O:"));
 
   for (uint8_t octave = 0; octave < numOctaves; octave++)       // 0 to 6
   {
-//    Serial.print(octave);
-//    Serial.print(F(" low:"));
-//    Serial.print(notes[octave][0].lowestFrequency);
-//    Serial.print(F(" high:"));
-//    Serial.print(notes[octave][numNotesPerOctave - 1].highestFrequency);
-//    Serial.print(F(" "));
-
     if ((frequency >= notes[octave][0].lowestFrequency) && (frequency < notes[octave][numNotesPerOctave - 1].highestFrequency))
     {
       octave_found = octave;
     }
   }
-//  Serial.print(F(" found: "));
-//  Serial.print(octave_found);
-//  Serial.print(F("| "));
 
   return octave_found;
 }
@@ -464,19 +453,16 @@ uint8_t find_note(uint16_t frequency, uint8_t &octave, uint8_t &tuning)
     // and then, find if the frequency is in tune, flat or sharp
     if (frequency < notes[octave][note_found].lowerRange)
     {
-      // flat!
       tuning = TUNING_FLAT;
     }
     else
     {
       if (frequency > notes[octave][note_found].upperRange)
       {
-        // sharp!
         tuning = TUNING_SHARP;
       }
       else
       {
-        // in tune!
         tuning = TUNING_IN_TUNE;
       }
     }
