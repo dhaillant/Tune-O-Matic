@@ -737,7 +737,7 @@ void setup() {
 void loop()
 {
 
-  uint16_t frequency = 0;
+  uint32_t frequency = 0;
   frequency = (TIMER_RATE_10 * 100) / (averaged_period >> 4); // Timer rate with an extra zero/period.
 
   #ifdef TEST_FIND_NOTE
