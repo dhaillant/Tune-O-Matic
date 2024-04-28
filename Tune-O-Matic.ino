@@ -83,7 +83,7 @@
 byte newData  = 0;
 byte prevData = 0;
 
-uint16_t period = 0;
+uint32_t period = 0;
 uint32_t averaged_period = 0;
 
 //uint16_t frequency = 0;
@@ -155,7 +155,7 @@ ISR(ADC_vect) {       // When new ADC value ready.
           totalTimer += timer[i];
         }
 
-        period = totalTimer * 100 ; // Set period. and increase resolution
+        period = (uint32_t)totalTimer * 100 ; // Set period. and increase resolution
 
         // moving average
         averaged_period = period + averaged_period - ((averaged_period - 8) >> 4);
