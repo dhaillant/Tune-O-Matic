@@ -20,6 +20,9 @@
 // - modification of display chars (reduced memory usage and simplification)
 // - added exponential weighted moving average calculation for the period, and increased precision
 
+// August 2025
+// test dimmable feature with new_wave branch
+
 /*
  * This code reads an analog signal, finds the rising edge, measures the period between each rising edge,
  * computes the frequency, compares that frequency to the table of in-tune frequencies and finally displays
@@ -46,7 +49,7 @@
 
 
 // uncomment to activate serial output and LEDs test patterns
-#define DEBUG
+//#define DEBUG
 
 // uncomment the corresponding 7-segment display type
 #define COMMON_ANODE
@@ -623,17 +626,47 @@ void display_LEDs(uint8_t LEDs)
   digitalWrite(LED_SHARP_PIN,   LEDs & (1 << 0) ? HIGH : LOW);  // sharp
 }
 
+#define DIM_DISPLAY
+#ifdef DIM_DISPLAY
+  #define DIM_LEVEL 9     // 0 to 9, lowest = brightest
+  #define DIM_MAX 9      // Dimming resolution
+  uint8_t dim_count = 0;
+#endif
+
 void display_note(uint8_t note)
 {
-  switch (note)
-  {
-    case 0xFF:
-      display_digit(led_digits[CHAR_NEG]);
-      break;
-    default:
-      display_digit(led_digits[note + NOTE_OFFSET]);
-      break;
-  }
+  #ifdef DIM_DISPLAY
+    // if display needs to be dimmed, increment a counter, then, at certain level, replace displayed char by empty display (CHAR_OFF)
+    if (dim_count < DIM_LEVEL)
+    {
+      display_digit(led_digits[CHAR_OFF]);
+    }
+    else
+    {
+      switch (note)
+      {
+        case 0xFF:
+          display_digit(led_digits[CHAR_NEG]);
+          break;
+        default:
+          display_digit(led_digits[note + NOTE_OFFSET]);
+          break;
+      }
+
+    }
+    dim_count++;
+    if (dim_count > DIM_MAX)
+    {
+      dim_count = 0;
+    }
+    #ifdef DEBUG
+      Serial.print(F("DIM "));
+      Serial.print(dim_count);
+      Serial.print(F(" | "));
+    #endif
+
+  #endif
+
 }
 
 void display_tuning(uint8_t tuning)
