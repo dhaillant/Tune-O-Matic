@@ -191,7 +191,7 @@ ISR(ADC_vect) {       // When new ADC value ready.
     }
   }
     
-  if (newData == 0 || newData == 1023){ // If clipping 
+  if (newData == 0 || newData == 255){ // If clipping 
     PORTB |= B00100000; // set pin 13 high, i.e. turn on clipping indicator led.
     clipping = true; // Currently clipping.
   }
