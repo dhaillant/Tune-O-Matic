@@ -23,6 +23,9 @@
 // August 2025
 // test dimmable feature with new_wave branch
 
+// 05 Oct. 2025
+// - remove warning: comparison is always false due to limited range of data type (thanks to MeeBilt)
+
 /*
  * This code reads an analog signal, finds the rising edge, measures the period between each rising edge,
  * computes the frequency, compares that frequency to the table of in-tune frequencies and finally displays
