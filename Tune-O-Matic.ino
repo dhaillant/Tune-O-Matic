@@ -20,6 +20,10 @@
 // - modification of display chars (reduced memory usage and simplification)
 // - added exponential weighted moving average calculation for the period, and increased precision
 
+
+// 05 Oct. 2025
+// - remove warning: comparison is always false due to limited range of data type (thanks to MeeBilt)
+
 /*
  * This code reads an analog signal, finds the rising edge, measures the period between each rising edge,
  * computes the frequency, compares that frequency to the table of in-tune frequencies and finally displays
