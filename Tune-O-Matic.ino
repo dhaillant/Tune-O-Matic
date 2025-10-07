@@ -55,7 +55,7 @@
 
 
 // uncomment to activate serial output and LEDs test patterns
-#define DEBUG
+//#define DEBUG
 
 // uncomment the corresponding 7-segment display type
 #define COMMON_ANODE
@@ -126,11 +126,6 @@ byte noMatch  =   0;      // Counts how many non-matches you've received to rese
 byte slopeTol = 100;      // Slope tolerance - adjust this if you need.    *** 100 required here for dealing with square-ish signals ***
 int timerTol  =  10;      // Timer tolerance - adjust this if you need.
 
-// Variables for amp detection.
-unsigned int ampTimer = 0;
-byte maxAmp = 0;
-byte checkMaxAmp;
-byte ampThreshold = 30;   // Raise if you have a very noisy signal.
 long clippingTimer = 0;
 
 // Clipping indicator variables.
@@ -208,16 +203,6 @@ ISR(ADC_vect) {       // When new ADC value ready.
     PORTB &= B11011111; // Set pin 13 low, i.e. turn off clipping indicator led.
     clipping = false;   // Currently not clipping.
     clippingTimer = 0;
-  }
-  
-  ampTimer++; // Increment amplitude timer.
-  if (abs(HALF_SAMPLE_VALUE - ADCH) > maxAmp){
-    maxAmp = abs(HALF_SAMPLE_VALUE-ADCH);
-  }
-  if (ampTimer == 1000){
-    ampTimer = 0;
-    checkMaxAmp = maxAmp;
-    maxAmp = 0;
   }
 }
 
