@@ -333,7 +333,7 @@ struct Note {
 };
 
 // Define the number of octaves and notes per octave
-const int numOctaves = 7;
+const int numOctaves = 8;       // max octave: 8 because 16bit is 65535 max (6553.5 Hz)
 const int numNotesPerOctave = 12;
 const float cents = 6.0;
 
@@ -415,11 +415,11 @@ void setup_all_frequencies(void)
 
 
 // **** note detection *****************************
-uint8_t find_octave(uint16_t frequency)
+uint8_t find_octave(uint32_t frequency)
 {
   uint8_t octave_found = 0xFF;
 
-  for (uint8_t octave = 0; octave < numOctaves; octave++)       // 0 to 6
+  for (uint8_t octave = 0; octave < numOctaves; octave++)       // for each octave
   {
     if ((frequency >= notes[octave][0].lowestFrequency) && (frequency < notes[octave][numNotesPerOctave - 1].highestFrequency))
     {
@@ -434,7 +434,7 @@ uint8_t find_octave(uint16_t frequency)
 #define TUNING_IN_TUNE '-'
 #define TUNING_SHARP '#'
 
-uint8_t find_note(uint16_t frequency, uint8_t &octave, uint8_t &tuning)
+uint8_t find_note(uint32_t frequency, uint8_t &octave, uint8_t &tuning)
 // input:
 // * frequency is in dHz (1/10 of Hertz)
 // outputs:
@@ -775,7 +775,7 @@ void loop()
     // overrides frequency calculation
     frequency = test_increment;
     test_increment += 10;
-    if (test_increment > 25000) { test_increment = 0; }
+    if (test_increment > 40000) { test_increment = 0; }
   #endif
 
   uint8_t octave = 0xFF;
