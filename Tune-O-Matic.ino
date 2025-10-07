@@ -55,7 +55,7 @@
 
 
 // uncomment to activate serial output and LEDs test patterns
-//#define DEBUG
+#define DEBUG
 
 // uncomment the corresponding 7-segment display type
 #define COMMON_ANODE
@@ -371,7 +371,11 @@ void setup_all_frequencies(void)
   uint16_t max_boundary = 0;
 
   uint8_t midiNoteNumber = 0;
-  
+
+  #ifdef DEBUG
+    Serial.println(F("    Octave | MIDI note\t| Central Freq.\t| Min\t|  > \t|  < \t| Max \t|"));
+  #endif
+    
   // Populate the notes array
   for (uint8_t octave = 0; octave < numOctaves; octave++)       // 0 to 6
   {
@@ -393,13 +397,13 @@ void setup_all_frequencies(void)
       notes[octave][note].upperRange = max_acceptable;
 
       #ifdef DEBUG
-        Serial.print(F("Octave #: "));
+        Serial.print(F("    "));
         Serial.print(octave);
-        Serial.print(F(" Note #: "));
+        Serial.print(F(" \t | "));
         Serial.print(midiNoteNumber);
-        Serial.print(F(" Freq.: "));
+        Serial.print(F(" \t\t| "));
         Serial.print(central_frequency);
-        Serial.print(F("  \t| "));
+        Serial.print(F("   \t| "));
         Serial.print(min_boundary);
         Serial.print(F("\t| "));
         Serial.print(min_acceptable);
