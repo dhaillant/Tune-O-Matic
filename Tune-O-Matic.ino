@@ -24,7 +24,10 @@
 // test dimmable feature with new_wave branch
 
 // 05 Oct. 2025
-// - remove warning: comparison is always false due to limited range of data type (thanks to MeeBilt)
+// - Removed warning: "comparison is always false due to limited range of data type" (thanks to MeeBilt)
+// 07 Oct. 2025
+// - Removed calls to digitalWrite in display_digit.
+// - Also removed calls to digitalWrite for Target LEDs.
 
 /*
  * This code reads an analog signal, finds the rising edge, measures the period between each rising edge,
@@ -74,16 +77,16 @@
 #define LED_IN_TUNE_PIN   19    // A5 (in-tune)
 #define LED_SHARP_PIN     17    // A3 (sharp)
 
-// 9 segment display output pins;
-#define LEDA  8
-#define LEDB  9
-#define LEDC  4
-#define LEDD  3
-#define LEDE  2
-#define LEDF  7
-#define LEDG  6
-#define LEDDP 5
-
+// 7 segment display output pins;
+// (order kept for retro compatibility)
+#define LEDA  8     // PB 0
+#define LEDB  9     // PB 1
+#define LEDC  4     // PD 4
+#define LEDD  3     // PD 3
+#define LEDE  2     // PD 2
+#define LEDF  7     // PD 7
+#define LEDG  6     // PD 6
+#define LEDDP 5     // PD 5
 
 // frequency detection variables
 byte newData  = 0;
@@ -575,63 +578,43 @@ const uint8_t led_digits[] = {
   0b00000001      // - CHAR_NEG
 };
 
-// definitions for the 3 target LEDs
-#define LED_FLAT    4
-#define LED_IN_TUNE 2
-#define LED_SHARP   1
-#define LED_NONE    0
-/*
-void test_digits(int delayTime)
-{
-  setLeds(LED_FLAT,    led_digits[CHAR_OFF]);
-  delay(delayTime);
-  setLeds(LED_IN_TUNE, led_digits[CHAR_OFF]);
-  delay(delayTime);
-  setLeds(LED_SHARP,   led_digits[CHAR_OFF]);
-  delay(delayTime);
-  
-  for (uint8_t i = 0; i < MAX_CHARS; i++)
-  {
-    setLeds(0, led_digits[i]);
-    delay(delayTime);
-  }
-}
-*/
-
-
 
 void display_digit(uint8_t digit)
 // digit describes how to draw the character on the 7-segment display
 // it's a byte, and each bit is a segment, where 0 = segment is OFF, 1 = segment is ON
 {
-  // Decode 7-segment pattern and switch on/off the leds.
   #ifdef COMMON_ANODE
     digit = ~digit;   // invert pattern when COMMON_ANODE display is used
   #endif
 
-  //                                                         mask
-  digitalWrite(LEDE,  digit & (1 << 7) ? HIGH : LOW);     // 10000000
-  digitalWrite(LEDD,  digit & (1 << 6) ? HIGH : LOW);     // 01000000
-  digitalWrite(LEDC,  digit & (1 << 5) ? HIGH : LOW);     // 00100000
-  digitalWrite(LEDDP, digit & (1 << 4) ? HIGH : LOW);     // 00010000
-  digitalWrite(LEDB,  digit & (1 << 3) ? HIGH : LOW);     // 00001000
-  digitalWrite(LEDA,  digit & (1 << 2) ? HIGH : LOW);     // 00000100
-  digitalWrite(LEDF,  digit & (1 << 1) ? HIGH : LOW);     // 00000010
-  digitalWrite(LEDG,  digit & (1 << 0) ? HIGH : LOW);     // 00000001
+  // temporary bytes
+  byte portb = 0;
+  byte portd = 0;
+
+  // digit:     EDC.BAFG
+  
+  // PORTB      xxxxxxBA
+  portb |= ((digit >> 2) & 0x01) << PB0; // A
+  portb |= ((digit >> 3) & 0x01) << PB1; // B
+
+  // PORTD      FGPCDExx
+  portd |= ((digit >> 5) & 0x01) << PD4; // C
+  portd |= ((digit >> 6) & 0x01) << PD3; // D
+  portd |= ((digit >> 7) & 0x01) << PD2; // E
+  portd |= ((digit >> 1) & 0x01) << PD7; // F
+  portd |= ((digit >> 0) & 0x01) << PD6; // G
+  portd |= ((digit >> 4) & 0x01) << PD5; // dp
+
+  // write to actual registers
+  PORTB = (PORTB & 0b11111100) | portb;  // do not alter PB7 to PB2
+  PORTD = (PORTD & 0b00000011) | portd;  // do not alter PD0 and PD1
 }
 
-void display_LEDs(uint8_t LEDs)
-// LEDs contains the 3 bits indicating the 3 "target" LEDs
-// bit 0 is "sharp", bit 1 is "in-tune" and bit 2 is "flat"
-{
-  digitalWrite(LED_FLAT_PIN,    LEDs & (1 << 2) ? HIGH : LOW);  // flat
-  digitalWrite(LED_IN_TUNE_PIN,  LEDs & (1 << 1) ? HIGH : LOW);  // in-tune
-  digitalWrite(LED_SHARP_PIN,   LEDs & (1 << 0) ? HIGH : LOW);  // sharp
-}
+
 
 #define DIM_DISPLAY
 #ifdef DIM_DISPLAY
-  #define DIM_LEVEL 9     // 0 to 9, lowest = brightest
+  #define DIM_LEVEL 0     // 0 to 9, lowest = brightest
   #define DIM_MAX 9      // Dimming resolution
   uint8_t dim_count = 0;
 #endif
@@ -670,6 +653,32 @@ void display_note(uint8_t note)
 
   #endif
 
+}
+
+
+// definitions for the 3 target LEDs
+#define LED_FLAT    4
+#define LED_IN_TUNE 2
+#define LED_SHARP   1
+#define LED_NONE    0
+
+void display_LEDs(uint8_t LEDs)
+// LEDs contains the 3 bits indicating the 3 "target" LEDs
+// bit 0 is "sharp", bit 1 is "in-tune" and bit 2 is "flat"
+{
+  // "target" tuning LED output pins. Active HIGH (as Common Cathode)
+  // LED_FLAT_PIN      18     A4 (flat)     PC4
+  // LED_IN_TUNE_PIN   19     A5 (in-tune)  PC5
+  // LED_SHARP_PIN     17     A3 (sharp)    PC3
+
+  byte portc = 0;
+  // PORTC      xxTb#xxx
+  portc |= ((LEDs >> 0) & 0x01) << PC3; // # (sharp)
+  portc |= ((LEDs >> 1) & 0x01) << PC5; // T (in Tune)
+  portc |= ((LEDs >> 2) & 0x01) << PC4; // b (flat)
+
+  // write to actual register
+  PORTC = (PORTC & 0b11000111) | portc;  // do not alter PC7, PC6 and PC2 to PC0
 }
 
 void display_tuning(uint8_t tuning)
