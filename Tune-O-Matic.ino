@@ -55,6 +55,7 @@
 
 
 // uncomment to activate serial output and LEDs test patterns
+// WARNING: activating DEBUG serial output may impact results!
 //#define DEBUG
 
 // uncomment the corresponding 7-segment display type
