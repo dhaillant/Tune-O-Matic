@@ -759,7 +759,12 @@ void loop()
 {
 
   uint32_t frequency = 0;
-  frequency = (TIMER_RATE_10 * 100) / (averaged_period >> 4); // Timer rate with an extra zero/period.
+  uint32_t local_period = averaged_period >> 4;
+
+  if (local_period > 0) // avoid division-by-zero
+  {
+    frequency = (TIMER_RATE_10 * 100) / local_period; // Timer rate with an extra zero/period.
+  }
 
   #ifdef TEST_FIND_NOTE
     // overrides frequency calculation
