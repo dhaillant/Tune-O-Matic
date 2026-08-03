@@ -735,6 +735,7 @@ void setup() {
   pinMode(LEDF,  OUTPUT);
   pinMode(LEDG,  OUTPUT);
 
+  pinMode(12,    OUTPUT); // pin for Sync test point
 
   #ifdef DEBUG
     Serial.begin(115200);
