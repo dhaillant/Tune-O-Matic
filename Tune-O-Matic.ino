@@ -109,6 +109,16 @@ uint32_t averaged_period = 0;
  */
 
 #define TIMER_RATE 384615
+
+/*
+ * If the frequency readings are all 7% higher than expected:
+ * then your Arduino might need 14 cycles per conversion.
+ * The correct TIMER_RATE value is:
+ * 500kHz / 14 = 35714,285714286
+ */
+
+//#define TIMER_RATE 357143
+
 #define TIMER_RATE_10 TIMER_RATE
 
 // Data storage variables.
