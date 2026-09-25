@@ -54,9 +54,11 @@
 */
 
 
+#include <util/atomic.h>   // ATOMIC_BLOCK for ISR-shared variables
+
 // uncomment to activate serial output and LEDs test patterns
 // WARNING: activating DEBUG serial output may impact results!
-//#define DEBUG
+#define DEBUG
 
 // uncomment the corresponding 7-segment display type
 #define COMMON_ANODE
@@ -94,7 +96,7 @@ byte newData  = 0;
 byte prevData = 0;
 
 uint32_t period = 0;
-uint32_t averaged_period = 0;
+volatile uint32_t averaged_period = 0;
 
 //uint16_t frequency = 0;
 
@@ -770,7 +772,11 @@ void loop()
 {
 
   uint32_t frequency = 0;
-  uint32_t local_period = averaged_period >> 4;
+  uint32_t avg;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {   // 32-bit read must not be torn by ADC_vect
+    avg = averaged_period;
+  }
+  uint32_t local_period = avg >> 4;
 
   if (local_period > 0) // avoid division-by-zero
   {
@@ -793,7 +799,7 @@ void loop()
   display_tuning(tuning);
 
   #ifdef DEBUG
-    Serial.print(averaged_period >> 4);
+    Serial.print(local_period);
     Serial.print(F(" "));
   
     Serial.print(F(" octave: "));
